@@ -9,6 +9,7 @@ import { Wordmark } from "./wordmark";
 import { useAppStore, type Lens } from "@/stores/app-store";
 import { api } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
+import { NotificationsBell } from "./notifications-bell";
 import {
   Search, Heart, Coins, User, Shield, Compass, Home, LogOut, X, Menu,
 } from "lucide-react";
@@ -103,6 +104,7 @@ export function Navigation() {
 
             {user ? (
               <>
+                <NotificationsBell />
                 <button
                   onClick={() => setView("wishlist")}
                   className="p-2 text-ash hover:text-bone transition-colors relative"

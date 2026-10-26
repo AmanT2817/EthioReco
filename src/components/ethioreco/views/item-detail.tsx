@@ -12,7 +12,7 @@ import { StarRating } from "@/components/ethioreco/star-rating";
 import { ItemCard, type ItemData } from "@/components/ethioreco/item-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronLeft, Heart, Sparkles, ThumbsDown } from "lucide-react";
+import { ChevronLeft, Heart, Sparkles, ThumbsDown, Bell, BellOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ItemDetail() {
@@ -23,6 +23,7 @@ export function ItemDetail() {
   const [submitting, setSubmitting] = useState(false);
   const [inWishlist, setInWishlist] = useState(false);
   const [notInterested, setNotInterested] = useState(false);
+  const [notifyOnMatch, setNotifyOnMatch] = useState(false);
 
   useEffect(() => {
     if (!activeItemId) return;
@@ -40,7 +41,13 @@ export function ItemDetail() {
     if (!activeItemId) return;
     api.getWishlist().then((r) => {
       const wl = (r.data as any[]).find((w) => w.itemId === activeItemId);
-      setInWishlist(!!wl);
+      if (wl) {
+        setInWishlist(true);
+        setNotifyOnMatch(!!wl.notifyOnMatch);
+      } else {
+        setInWishlist(false);
+        setNotifyOnMatch(false);
+      }
     }).catch(() => {});
     api.myRatings().then((r) => {
       const rating = (r.data as any[]).find((rt) => rt.itemId === activeItemId);
@@ -64,9 +71,21 @@ export function ItemDetail() {
     if (inWishlist) {
       await api.removeWishlist(activeItemId!);
       setInWishlist(false);
+      setNotifyOnMatch(false);
     } else {
       await api.addWishlist(activeItemId!, "medium");
       setInWishlist(true);
+    }
+  };
+
+  const handleNotifyToggle = async () => {
+    if (!inWishlist) return; // safety — must be in wishlist first
+    const next = !notifyOnMatch;
+    setNotifyOnMatch(next);
+    try {
+      await api.toggleNotifyOnMatch(activeItemId!, next);
+    } catch {
+      setNotifyOnMatch(!next); // revert on error
     }
   };
 
@@ -223,7 +242,7 @@ export function ItemDetail() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center gap-2 pt-2">
             <Button
               onClick={handleWishlist}
               variant="outline"
@@ -235,6 +254,20 @@ export function ItemDetail() {
               <Heart className={cn("h-4 w-4 mr-2", inWishlist && "fill-ember")} />
               {inWishlist ? "In wishlist" : "Add to wishlist"}
             </Button>
+            {inWishlist && (
+              <Button
+                onClick={handleNotifyToggle}
+                variant="outline"
+                className={cn(
+                  "border-border/60 text-bone hover:text-violet-halo hover:border-violet-halo/60 bg-transparent",
+                  notifyOnMatch && "border-violet-halo/60 text-violet-halo",
+                )}
+                title="Notify when a strong cross-domain match is found for this item"
+              >
+                {notifyOnMatch ? <Bell className="h-4 w-4 mr-2" /> : <BellOff className="h-4 w-4 mr-2" />}
+                {notifyOnMatch ? "Notifying" : "Notify on match"}
+              </Button>
+            )}
             <Button
               onClick={handleNotInterested}
               disabled={submitting}
@@ -248,6 +281,12 @@ export function ItemDetail() {
               {notInterested ? "Marked not interested" : "Not interested"}
             </Button>
           </div>
+          {inWishlist && notifyOnMatch && (
+            <p className="text-xs text-violet-halo/80 italic mt-1">
+              We&apos;ll surface a notification here and in the bell dropdown when we find a
+              strong cross-domain match for this item.
+            </p>
+          )}
         </div>
       </div>
 

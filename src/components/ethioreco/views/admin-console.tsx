@@ -14,9 +14,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Shield, Users, BookPlus, ScrollText, RefreshCw } from "lucide-react";
+import { Shield, Users, BookPlus, ScrollText, RefreshCw, CloudDownload } from "lucide-react";
+import { AdminImport } from "./admin-import";
 
-type Tab = "users" | "content" | "logs";
+type Tab = "users" | "content" | "import" | "logs";
 
 export function AdminConsole() {
   const [tab, setTab] = useState<Tab>("users");
@@ -31,6 +32,8 @@ export function AdminConsole() {
       api.adminUsers().then((r) => setUsers(r.data as any[])).catch(() => {}).finally(() => setLoading(false));
     } else if (tab === "content") {
       api.adminContent().then((r) => setItems(r.data as any[])).catch(() => {}).finally(() => setLoading(false));
+    } else if (tab === "import") {
+      // Import tab fetches results on demand — no initial load needed
     } else {
       api.adminLogs().then((r) => setLogs(r.data as any[])).catch(() => {}).finally(() => setLoading(false));
     }
@@ -51,6 +54,7 @@ export function AdminConsole() {
       <div className="flex gap-2 mb-6 border-b border-border/40 pb-3 flex-wrap">
         <TabBtn icon={<Users className="h-3 w-3" />} label="Users" active={tab === "users"} onClick={() => setTab("users")} />
         <TabBtn icon={<BookPlus className="h-3 w-3" />} label="Content" active={tab === "content"} onClick={() => setTab("content")} />
+        <TabBtn icon={<CloudDownload className="h-3 w-3" />} label="Import" active={tab === "import"} onClick={() => setTab("import")} />
         <TabBtn icon={<ScrollText className="h-3 w-3" />} label="Audit logs" active={tab === "logs"} onClick={() => setTab("logs")} />
       </div>
 
@@ -64,6 +68,8 @@ export function AdminConsole() {
         <UsersTable users={users} />
       ) : tab === "content" ? (
         <ContentPanel items={items} />
+      ) : tab === "import" ? (
+        <AdminImport />
       ) : (
         <LogsTable logs={logs} />
       )}

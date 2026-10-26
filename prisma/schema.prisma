@@ -35,6 +35,7 @@ model User {
   creditTransactions    CreditTransaction[]
   adminLogs             AdminLog[]
   recommendationFeedback RecommendationFeedback[]
+  notifications          Notification[]
 }
 
 // =====================================================
@@ -68,6 +69,7 @@ model Item {
   wishlist          Wishlist[]
   ethiopianMetadata EthiopianMetadata?
   itemVector        ItemVector?
+  notifications     Notification[]
 }
 
 model ItemVector {
@@ -159,17 +161,40 @@ model RecommendationFeedback {
 // WISHLIST
 // =====================================================
 model Wishlist {
-  id        String   @id @default(cuid())
-  userId    String
-  itemId    String
-  priority  String   @default("medium") // high/medium/low
-  notes     String?
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  userId         String
+  itemId         String
+  priority       String   @default("medium") // high/medium/low
+  notes          String?
+  notifyOnMatch  Boolean  @default(false) // "Notify when matched" — surfaces notifications when a strong cross-domain match is found for this item
+  lastNotifiedAt DateTime?
+  createdAt      DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item           Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([userId, itemId])
+}
+
+// =====================================================
+// NOTIFICATIONS — "Notify when matched" + system alerts
+// =====================================================
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // cross_domain_match | rating_threshold | cultural_pick | rec_refreshed | admin_message
+  title       String
+  body        String
+  itemId      String?  // optional link to an item
+  matchScore  Float?
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item        Item?    @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
 }
 
 // =====================================================

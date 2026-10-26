@@ -61,6 +61,16 @@ export const api = {
     call("/api/wishlist", { method: "POST", body: JSON.stringify({ itemId, priority }) }),
   removeWishlist: (itemId: string) =>
     call(`/api/wishlist/${itemId}`, { method: "DELETE" }),
+  toggleNotifyOnMatch: (itemId: string, enabled: boolean) =>
+    call("/api/wishlist/notify", { method: "POST", body: JSON.stringify({ itemId, enabled }) }),
+
+  // NOTIFICATIONS
+  getNotifications: () => call("/api/notifications"),
+  markNotificationsRead: (notificationId?: string) =>
+    call("/api/notifications/read", {
+      method: "POST",
+      body: JSON.stringify(notificationId ? { notificationId } : {}),
+    }),
 
   // CREDITS
   getBalance: () => call("/api/credits/balance"),
@@ -82,4 +92,10 @@ export const api = {
   // ITEMS — admin
   recomputeVectors: () =>
     call("/api/items/recompute-vectors", { method: "POST" }),
+
+  // ADMIN — import from external APIs
+  searchExternal: (source: "movie" | "music" | "book", q: string) =>
+    call(`/api/admin/import?source=${source}&q=${encodeURIComponent(q)}`),
+  importExternal: (body: any) =>
+    call("/api/admin/import", { method: "POST", body: JSON.stringify(body) }),
 };

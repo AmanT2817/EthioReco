@@ -10,6 +10,7 @@ import { applyCulturalBoost } from "./cultural_boost";
 import { coldStartRecommendations } from "./cold_start";
 import { generateExplanation, type ExplanationKind } from "./explanation";
 import { mapCrossDomain } from "./cross_domain";
+import { scanWishlistForMatches } from "./notify_match";
 
 export interface ScoredRec {
   itemId: string;
@@ -68,6 +69,13 @@ export async function calibrateUserTaste(userId: string): Promise<ScoredRec[]> {
       },
     });
   }
+
+  // After calibration, scan wishlist for cross-domain matches (non-blocking)
+  // Per spec: "Notify when matched" — surfaces a notification when a strong
+  // cross-domain match is found for an item the user has wishlisted.
+  void scanWishlistForMatches(userId).catch((err) => {
+    console.error("[notify_match] scan failed:", err);
+  });
 
   return finalRecs;
 }

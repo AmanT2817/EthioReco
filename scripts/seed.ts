@@ -76,6 +76,44 @@ const SEED_DATA: SeedItem[] = [
       featuredPriority: 7,
     },
   },
+  {
+    title: "Kibur Yalf Zefqel",
+    type: "book",
+    description: "A foundational Ethiopian novel exploring faith, identity, and the moral weight of family in the highlands.",
+    releaseYear: 1980,
+    language: "Amharic",
+    country: "Ethiopia",
+    coverImageUrl: poster("kibur"),
+    author: "Abbe Gobena",
+    genre: "Drama",
+    ethiopian: {
+      culturalRegion: "Gondar",
+      traditionalGenre: "Amharic Literature",
+      isTraditional: true,
+      amharicTitle: "ክቡር ያልፈ ዘፍቅል",
+      culturalSignificance: "A classic of the Amharic realist tradition. The novel's exploration of highland life is widely taught in Ethiopian schools.",
+      featuredPriority: 7,
+    },
+  },
+  {
+    title: "Adhïs Yefelgede Yä-Mängest",
+    type: "book",
+    description: "A satirical novel exposing the absurdities of bureaucracy through the eyes of a young clerk in Addis Ababa.",
+    releaseYear: 1992,
+    language: "Amharic",
+    country: "Ethiopia",
+    coverImageUrl: poster("adhis"),
+    author: "Bealu Girma",
+    genre: "Comedy",
+    ethiopian: {
+      culturalRegion: "Addis Ababa",
+      traditionalGenre: "Amharic Literature",
+      isTraditional: false,
+      amharicTitle: "አድህስ የፈለገው መንግስት",
+      culturalSignificance: "Bealu Girma is one of the great satirical voices of Amharic literature. This novel uses absurdist humor to critique state power — a politically charged move that resonated deeply with Ethiopian readers.",
+      featuredPriority: 6,
+    },
+  },
   // === ETHIOPIAN — Film ===
   {
     title: "Difret",
@@ -112,6 +150,25 @@ const SEED_DATA: SeedItem[] = [
       isTraditional: false,
       amharicTitle: "ላምባዲና",
       culturalSignificance: "Modern Ethiopian diaspora cinema exploring themes of return and identity.",
+      featuredPriority: 6,
+    },
+  },
+  {
+    title: "Yefelash Shewa — Whisper of the Lion",
+    type: "movie",
+    description: "A historical drama set in late 19th-century Shewa, exploring the conflict between tradition and modernization through the eyes of a royal advisor.",
+    releaseYear: 2018,
+    language: "Amharic",
+    country: "Ethiopia",
+    coverImageUrl: poster("shewa"),
+    director: "Temesgen Gossaye",
+    genre: "Historical Fiction",
+    ethiopian: {
+      culturalRegion: "Addis Ababa",
+      traditionalGenre: "Ethiopian Film",
+      isTraditional: false,
+      amharicTitle: "የፈላሽ ሸዋ — የአንበሳ ስልት",
+      culturalSignificance: "Historical Ethiopian cinema is rare. This film uses period detail to interrogate the late-19th-century reform movements that shaped modern Ethiopia.",
       featuredPriority: 6,
     },
   },
@@ -195,6 +252,66 @@ const SEED_DATA: SeedItem[] = [
       amharicTitle: "ትዝታ",
       culturalSignificance: "Mulatu Astatke is the father of Ethio-jazz, the only indigenous African form of jazz. His work fuses traditional kiñit with Latin rhythms and Western jazz harmony, creating a uniquely Ethiopian modernism.",
       featuredPriority: 9,
+    },
+  },
+  {
+    title: "Tizita — Aster Aweke",
+    type: "music",
+    description: "Aster Aweke's powerful vocal interpretation of Tizita — one of the most beloved modern recordings in the mode.",
+    releaseYear: 1990,
+    language: "Amharic",
+    country: "Ethiopia",
+    coverImageUrl: poster("aster"),
+    artist: "Aster Aweke",
+    album: "Aster",
+    genre: "Tizita",
+    ethiopian: {
+      culturalRegion: "Gondar",
+      traditionalGenre: "Tizita",
+      isTraditional: true,
+      amharicTitle: "ትዝታ — አስቴ አወቀ",
+      culturalSignificance: "Aster Aweke is one of Ethiopia's most beloved vocalists. Her interpretations of Tizita are widely credited with keeping the mode alive in the popular imagination of the diaspora.",
+      featuredPriority: 9,
+    },
+  },
+  {
+    title: "Bati — Asnakech Worku",
+    type: "music",
+    description: "Asnakech Worku's interpretation of Bati on the krar — a traditional five-stringed lyre.",
+    releaseYear: 1980,
+    language: "Amharic",
+    country: "Ethiopia",
+    coverImageUrl: poster("asnakech"),
+    artist: "Asnakech Worku",
+    album: "The Voice of the Krar",
+    genre: "Bati",
+    ethiopian: {
+      culturalRegion: "Gondar",
+      traditionalGenre: "Bati",
+      isTraditional: true,
+      amharicTitle: "ባቲ — አስናቀች ወርቁ",
+      culturalSignificance: "Asnakech Worku was a legendary krar player and vocalist whose work preserved traditional modes for over four decades. The krar itself is a foundational instrument in Ethiopian musical heritage.",
+      featuredPriority: 8,
+    },
+  },
+  {
+    title: "Sew Tedestel — Tizita in Anchihoye Mode",
+    type: "music",
+    description: "A cross-mode interpretation blending the Anchihoye and Tizita kiñit, performed by the legendary Hailu Mergia.",
+    releaseYear: 1978,
+    language: "Amharic",
+    country: "Ethiopia",
+    coverImageUrl: poster("hailu"),
+    artist: "Hailu Mergia",
+    album: "Tche Belew",
+    genre: "Anchihoye",
+    ethiopian: {
+      culturalRegion: "Addis Ababa",
+      traditionalGenre: "Anchihoye",
+      isTraditional: true,
+      amharicTitle: "ሰው ተደስተል — በአንጺሆዬ ቅንጅት",
+      culturalSignificance: "Hailu Mergia's work with the Walias Band represents a high-water mark of Ethiopian modernist music. 'Tche Belew' is considered one of the greatest Ethiopian albums ever recorded.",
+      featuredPriority: 8,
     },
   },
 
@@ -510,26 +627,32 @@ async function seed() {
   const vecCount = await recomputeAllItemVectors();
   console.log(`Vectorized ${vecCount} items.`);
 
-  // Create an admin user for testing
+  // Create an admin user for testing (idempotent — upsert)
   // Email: admin@ethioreco.local, Password: admin12345
-  // (Hash computed via the same PBKDF2 path used at runtime.)
   console.log("Creating admin user...");
   const adminPw = await hashPassword("admin12345");
-  const admin = await db.user.create({
-    data: {
-      email: "admin@ethioreco.local",
-      name: "Curator",
-      passwordHash: adminPw,
-      role: "admin",
-      status: "active",
-      onboardingCompleted: true,
-    },
-  });
-  await db.credit.create({ data: { userId: admin.id, balance: 1000 } });
-  await db.creditTransaction.create({
-    data: { userId: admin.id, amount: 1000, reason: "initial" },
-  });
-  console.log(`Admin created: admin@ethioreco.local / admin12345`);
+  const existingAdmin = await db.user.findUnique({ where: { email: "admin@ethioreco.local" } });
+  let admin;
+  if (existingAdmin) {
+    admin = existingAdmin;
+    console.log(`Admin already exists: admin@ethioreco.local / admin12345`);
+  } else {
+    admin = await db.user.create({
+      data: {
+        email: "admin@ethioreco.local",
+        name: "Curator",
+        passwordHash: adminPw,
+        role: "admin",
+        status: "active",
+        onboardingCompleted: true,
+      },
+    });
+    await db.credit.create({ data: { userId: admin.id, balance: 1000 } });
+    await db.creditTransaction.create({
+      data: { userId: admin.id, amount: 1000, reason: "initial" },
+    });
+    console.log(`Admin created: admin@ethioreco.local / admin12345`);
+  }
 
   console.log("Seed complete. Open EthioReco and click 'Begin Discovery' to register a user.");
   process.exit(0);
