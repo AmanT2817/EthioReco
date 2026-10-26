@@ -1,0 +1,235 @@
+// EthioReco — Personal Movie, Music & Book Recommendation System
+// Cinematic Discovery • Hybrid AI Engine • Ethiopian Cultural Module
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================
+// USERS — profile data (auth lives inline; simplified JWT)
+// =====================================================
+model User {
+  id                    String      @id @default(cuid())
+  email                 String      @unique
+  name                  String
+  passwordHash         String
+  preferredLanguage     String      @default("en") // 'en' or 'am' (Amharic)
+  ethiopianPreference   Boolean     @default(false)
+  status                String      @default("active") // active/suspended/deleted
+  role                  String      @default("user") // user/admin
+  onboardingCompleted   Boolean     @default(false)
+  lastLoginAt           DateTime?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  ratings               Rating[]
+  preferences           Preference[]
+  recommendations       Recommendation[]
+  wishlist              Wishlist[]
+  credit                Credit?
+  creditTransactions    CreditTransaction[]
+  adminLogs             AdminLog[]
+  recommendationFeedback RecommendationFeedback[]
+}
+
+// =====================================================
+// ITEMS — unified content table for books/movies/music
+// =====================================================
+model Item {
+  id                String      @id @default(cuid())
+  title             String
+  type              String      // 'book' | 'movie' | 'music'
+  description       String      @default("")
+  releaseYear        Int?
+  language          String?
+  country           String?
+  coverImageUrl     String?
+  externalId        String?
+  externalSource    String?     // tmdb/spotify/google_books/manual
+  averageRating     Float       @default(0)
+  ratingCount       Int         @default(0)
+  status            String      @default("active")
+  // denormalized type-specific attrs (JSON)
+  author            String?     // book
+  director          String?     // movie
+  artist            String?     // music
+  album             String?     // music
+  genre             String?     // shared genre field
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  ratings           Rating[]
+  recommendations   Recommendation[]
+  wishlist          Wishlist[]
+  ethiopianMetadata EthiopianMetadata?
+  itemVector        ItemVector?
+}
+
+model ItemVector {
+  id            String   @id @default(cuid())
+  itemId        String   @unique
+  embedding     String   // JSON-serialized number[] (TF-IDF vector)
+  featureText   String
+  vectorizedAt  DateTime @default(now())
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+// =====================================================
+// RATINGS
+// =====================================================
+model Rating {
+  id            String   @id @default(cuid())
+  userId        String
+  itemId        String
+  score         Float    // 0.5 - 5.0, half-star increments
+  review        String?
+  notInterested Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+  @@index([userId])
+  @@index([itemId])
+}
+
+// =====================================================
+// PREFERENCES (onboarding survey + rating patterns)
+// =====================================================
+model Preference {
+  id        String   @id @default(cuid())
+  userId    String
+  category  String   // 'book' | 'movie' | 'music'
+  genre     String
+  weight    Float    @default(0.5)
+  source    String   @default("rating") // survey/rating/manual
+  updatedAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category, genre])
+}
+
+// =====================================================
+// RECOMMENDATIONS (cached, with TTL)
+// =====================================================
+model Recommendation {
+  id                    String    @id @default(cuid())
+  userId                String
+  itemId                String
+  score                 Float
+  rank                  Int
+  algorithm             String    // content/collab/hybrid/cross_domain/cold_start
+  explanation            String?
+  crossDomain           Boolean   @default(false)
+  ethiopianBoostApplied Boolean   @default(false)
+  generatedAt           DateTime  @default(now())
+  expiresAt             DateTime
+  clickedAt             DateTime?
+  dismissedAt           DateTime?
+
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item                  Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  feedback              RecommendationFeedback[]
+
+  @@index([userId, expiresAt])
+  @@index([algorithm])
+}
+
+model RecommendationFeedback {
+  id               String   @id @default(cuid())
+  recommendationId String
+  userId           String
+  action           String   // clicked/dismissed/rated
+  ratingGiven      Float?
+  createdAt        DateTime @default(now())
+
+  recommendation   Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// =====================================================
+// WISHLIST
+// =====================================================
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  itemId    String
+  priority  String   @default("medium") // high/medium/low
+  notes     String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+}
+
+// =====================================================
+// CREDITS (100 initial per spec)
+// =====================================================
+model Credit {
+  userId    String   @id
+  balance   Int      @default(100)
+  updatedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CreditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  reason      String   // initial/rec_refresh/rating_reward/purchase
+  referenceId String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// =====================================================
+// ETHIOPIAN CONTENT METADATA
+// =====================================================
+model EthiopianMetadata {
+  itemId              String   @id
+  culturalRegion      String?  // Gondar/Addis Ababa/Tigray/Oromia
+  traditionalGenre    String?  // Tizita/Bati/Anchihoye for music
+  isTraditional       Boolean  @default(false)
+  amharicTitle        String?
+  amharicDescription  String?
+  culturalSignificance String?
+  featuredPriority    Int      @default(0)
+  curatedBy           String?
+  curationDate         DateTime @default(now())
+  item                Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+// =====================================================
+// ADMIN LOGS
+// =====================================================
+model AdminLog {
+  id          String   @id @default(cuid())
+  adminId     String
+  action      String
+  targetType  String?
+  targetId    String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  admin       User     @relation(fields: [adminId], references: [id])
+}
+
+// =====================================================
+// API CACHE (mocked external API responses)
+// =====================================================
+model ApiCache {
+  cacheKey   String   @id
+  source     String
+  response   String   // JSON string
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
