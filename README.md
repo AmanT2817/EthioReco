@@ -327,7 +327,7 @@ keeps everything in Next.js for simplicity, but the SQL migration in
 backend with no schema changes.
 
 ### Supabase (production database)
-1. Create a new Supabase project (free tier is fine for a graduation project)
+1. Create a new Supabase project (free tier is fine)
 2. In the Supabase SQL Editor, paste the entire contents of
    `supabase/migrations/0001_initial_schema.sql` and run it
 3. This creates all tables, RLS policies, triggers, and the HNSW vector index
@@ -353,10 +353,9 @@ bun test tests/
 
 ## License
 
-This is a graduation project for the University of Gondar, Department of
-Computer Science. Built by Amanuel Tadesse, Eyuel Teshome, and Yohannes Birku.
+EthioReco — a personal movie, music, and book recommendation platform.
 
-Spec prompts: © EthioReco project team. Code: see LICENSE (MIT suggested).
+Spec prompts: © EthioReco. Code: MIT (suggested) — adapt to your needs.
 
 ---
 

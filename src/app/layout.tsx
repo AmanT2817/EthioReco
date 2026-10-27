@@ -45,20 +45,34 @@ export const metadata: Metadata = {
     "EthioReco", "recommendation", "Ethiopian content", "Amharic",
     "Tizita", "discovery", "movies", "music", "books", "hybrid AI",
   ],
-  authors: [{ name: "EthioReco Team" }],
+  authors: [{ name: "EthioReco" }],
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" },
+    ],
   },
   openGraph: {
     title: "EthioReco — Discover what fits you",
     description: "Movies, music, and books — one discovery engine. Built with Ethiopian cultural relevance.",
     siteName: "EthioReco",
     type: "website",
+    images: [
+      {
+        url: "/ethioreco-logo-small.png",
+        width: 400,
+        height: 400,
+        alt: "EthioReco — film, music, books, and recommendation network",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "EthioReco",
     description: "Discover what fits you.",
+    images: ["/ethioreco-logo-small.png"],
   },
 };
 

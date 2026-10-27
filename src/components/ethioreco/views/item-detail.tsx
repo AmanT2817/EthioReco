@@ -126,9 +126,9 @@ export function ItemDetail() {
         Back to discovery
       </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-[400px,1fr] gap-8">
-        {/* LEFT: Cover art with atmospheric shadow */}
-        <div className="relative">
+      <div className="grid grid-cols-1 md:grid-cols-[280px,1fr] gap-8">
+        {/* LEFT: Cover art — constrained to 280px (was 400px, way too wide) */}
+        <div className="relative mx-auto md:mx-0 w-full max-w-[280px]">
           <div className="aspect-[2/3] rounded-lg overflow-hidden bg-graphite relative vignette shadow-2xl shadow-obsidian">
             {item.coverImageUrl ? (
                
@@ -295,15 +295,14 @@ export function ItemDetail() {
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="h-4 w-4 text-violet-halo" />
           <p className="text-xs uppercase tracking-widest text-violet-halo">
-            Unique UX move
+            Cross-domain recommendations
           </p>
         </div>
         <h2 className="text-2xl sm:text-3xl font-display uppercase tracking-tight mb-2">
           If you liked this, you might also like
         </h2>
         <p className="text-xs text-ash mb-6">
-          Cross-domain matches surface items from the OTHER two domains based on this item&apos;s
-          metadata. Visually distinct with violet halo accent.
+          Surfaced from the other two domains based on this item&apos;s metadata.
         </p>
 
         {crossDomain.length > 0 ? (

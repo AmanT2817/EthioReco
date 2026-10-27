@@ -148,17 +148,30 @@ async function buildHybridRecs(userId: string): Promise<ScoredRec[]> {
   return out.slice(0, MAX_RECS - 3); // leave room for cross-domain
 }
 
-// Cold start — onboarding preferences drive initial recs
+// Cold start — onboarding preferences drive initial recs.
+// If user has no preferences either, fall back to popular items (so the dashboard
+// is never empty — always show something to rate).
 async function buildColdStartRecs(userId: string): Promise<ScoredRec[]> {
   const cold = await coldStartRecommendations(userId, MAX_RECS - 3);
-  return cold.map((c) => ({
-    itemId: c.itemId,
-    finalScore: c.score,
-    algorithm: "cold_start" as ExplanationKind,
-    explanation: c.explanation,
-    crossDomain: false,
-    ethiopianBoostApplied: c.explanation.includes("Ethiopian"),
-  }));
+  if (cold.length > 0) {
+    return cold.map((c) => ({
+      itemId: c.itemId,
+      finalScore: c.score,
+      algorithm: "cold_start" as ExplanationKind,
+      explanation: c.explanation,
+      crossDomain: false,
+      ethiopianBoostApplied: c.explanation.includes("Ethiopian"),
+    }));
+  }
+  // No preferences either — fall back to popular items so the dashboard
+  // shows SOMETHING for the user to rate (this is what gets the engine going).
+  const myRatedItemIds = new Set<string>(
+    (await db.rating.findMany({
+      where: { userId },
+      select: { itemId: true },
+    })).map((r) => r.itemId),
+  );
+  return buildPopularFallback(userId, myRatedItemIds);
 }
 
 // Popular fallback for users with no neighbor overlap

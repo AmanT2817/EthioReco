@@ -4,7 +4,7 @@
 -- (or any Postgres 15+ instance with the pgvector extension).
 --
 -- Usage:
---   1. Create a new Supabase project (free tier is fine for a graduation project).
+--   1. Create a new Supabase project (free tier is fine).
 --   2. In the Supabase SQL Editor, run this entire file.
 --   3. Update your backend's SUPABASE_DB_URL env var to point to this project.
 --   4. Run your Prisma migrate / db push against the same DB (optional — this

@@ -18,9 +18,21 @@ import { cn } from "@/lib/utils";
 import { ChevronRight, ChevronLeft, Check } from "lucide-react";
 
 const GENRES = {
-  book: ["Romance", "Sci-Fi", "Fantasy", "Drama", "Thriller", "Mystery", "Historical Fiction", "Tizita", "Amharic Literature"],
-  movie: ["Drama", "Sci-Fi", "Romantic Comedy", "Thriller", "Fantasy", "Ethiopian Film", "Horror", "Comedy"],
-  music: ["Love Songs", "Electronic", "Tizita", "Bati", "Anchihoye", "Orchestral", "Blues", "Rock"],
+  book: [
+    "Romance", "Sci-Fi", "Fantasy", "Drama", "Thriller", "Mystery", "Historical Fiction",
+    "Comedy", "Horror", "Adventure", "Biography", "Poetry",
+    "Tizita", "Bati", "Amharic Literature", "Ethiopian History",
+  ],
+  movie: [
+    "Drama", "Sci-Fi", "Romantic Comedy", "Thriller", "Fantasy", "Ethiopian Film",
+    "Horror", "Comedy", "Action", "Adventure", "Animation", "Documentary",
+    "Crime", "Mystery", "War", "Western",
+  ],
+  music: [
+    "Love Songs", "Electronic", "Tizita", "Bati", "Anchihoye",
+    "Orchestral", "Blues", "Rock", "Pop", "Jazz", "Hip-Hop", "R&B",
+    "Folk", "Classical", "Soundtrack", "World",
+  ],
 };
 
 const MEDIUMS = [
@@ -316,7 +328,7 @@ function GenreGroup({
       <h3 className="text-xs uppercase tracking-widest text-ash mb-2">{label}</h3>
       <div className="flex flex-wrap gap-2">
         {genres.map((g) => {
-          const isEth = ["Tizita", "Bati", "Anchihoye", "Amharic Literature", "Ethiopian Film"].includes(g);
+          const isEth = ["Tizita", "Bati", "Anchihoye", "Amharic Literature", "Ethiopian Film", "Ethiopian History"].includes(g);
           const isSel = selected.includes(g);
           return (
             <button

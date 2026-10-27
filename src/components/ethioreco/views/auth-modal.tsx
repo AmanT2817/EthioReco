@@ -113,7 +113,7 @@ export function AuthModal() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-obsidian border-border/60"
-                placeholder="amanuel@uog.edu.et"
+                placeholder="you@gmail.com"
               />
             </div>
             <div className="space-y-2">

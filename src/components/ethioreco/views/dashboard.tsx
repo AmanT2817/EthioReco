@@ -20,6 +20,7 @@ export function Dashboard() {
   const [items, setItems] = useState<ItemData[]>([]);
   const [calibrating, setCalibrating] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [ethiopianOnly, setEthiopianOnly] = useState(false);
 
   useEffect(() => {
     // Initial load — fetch recs + a base catalog
@@ -39,15 +40,17 @@ export function Dashboard() {
     });
   }, []);
 
-  // Reflow items when lens changes (discovery lens UX)
+  // Reflow items when lens changes (discovery lens UX) or Ethiopian filter toggles
   useEffect(() => {
-    if (lens === "all") {
-      api.listItems({ limit: 24 }).then((r) => setItems(r.data as ItemData[]));
-    } else {
-      const t = lens === "movies" ? "movie" : lens === "music" ? "music" : "book";
-      api.listItems({ type: t, limit: 24 }).then((r) => setItems(r.data as ItemData[]));
+    const params: { type?: string; origin?: string; limit: number } = { limit: 24 };
+    if (lens !== "all") {
+      params.type = lens === "movies" ? "movie" : lens === "music" ? "music" : "book";
     }
-  }, [lens]);
+    if (ethiopianOnly) {
+      params.origin = "ethiopian";
+    }
+    api.listItems(params).then((r) => setItems(r.data as ItemData[]));
+  }, [lens, ethiopianOnly]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -76,7 +79,7 @@ export function Dashboard() {
 
   return (
     <div id="lens-stage" className="page-enter max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-6 space-y-12">
-      {/* Greeting + credit count */}
+      {/* Greeting + credit count + actions */}
       <header className="flex items-center justify-between gap-4 pt-2">
         <div>
           <p className="text-xs uppercase tracking-widest text-ash">
@@ -86,8 +89,22 @@ export function Dashboard() {
             Your discovery screen
           </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-graphite border border-border/40">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Ethiopian-only filter toggle */}
+          <button
+            onClick={() => setEthiopianOnly(!ethiopianOnly)}
+            title="Toggle: show only Ethiopian content"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs uppercase tracking-widest transition-all ${
+              ethiopianOnly
+                ? "bg-brass text-obsidian"
+                : "bg-graphite border border-border/40 text-ash hover:text-bone"
+            }`}
+          >
+            <Globe2 className="h-3 w-3" />
+            <span className="hidden sm:inline">Ethiopian only</span>
+            <span className="sm:hidden">Ethio</span>
+          </button>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-graphite border border-border/40" title="Credits remaining">
             <Coins className="h-3 w-3 text-brass" />
             <span className="match-score text-sm text-bone">{credits}</span>
           </div>
