@@ -1,5 +1,5 @@
 // EthioReco — Guest Landing
-// Redesigned per reference: stats bar + cross-domain showcase + Popular This Week + inline registration + University of Gondar footer
+// Redesigned per reference: stats bar + cross-domain showcase + Popular This Week + inline registration + EthioReco footer
 
 "use client";
 
@@ -119,9 +119,18 @@ export function GuestLanding() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 sm:py-24 w-full">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-4 text-ash text-xs uppercase tracking-widest">
-              <span className="inline-block w-2 h-2 rounded-full bg-ember animate-pulse" />
-              Cinematic Discovery · Hybrid AI Engine
+            <div className="flex items-center gap-3 mb-6">
+              {/* Logo: subtle, alongside tagline */}
+              { }
+              <img
+                src="/ethioreco-logo-small.png"
+                alt="EthioReco"
+                className="h-12 w-12 sm:h-16 sm:w-16 object-contain drop-shadow-[0_0_15px_rgba(200,57,42,0.3)]"
+              />
+              <div className="flex items-center gap-2 text-ash text-xs uppercase tracking-widest">
+                <span className="inline-block w-2 h-2 rounded-full bg-ember animate-pulse" />
+                Cinematic Discovery · Hybrid AI Engine
+              </div>
             </div>
             <h1 className="text-5xl sm:text-7xl font-display uppercase tracking-tight leading-[0.9] mb-6">
               Discover what
@@ -421,20 +430,27 @@ export function GuestLanding() {
       <footer className="border-t border-border/40 bg-obsidian">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-1.5 font-display uppercase tracking-tight text-base">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-ember" />
-                <span className="brand-ethio">Ethio</span>
-                <span className="brand-reco">Reco</span>
+            <div className="flex items-center gap-3">
+              { }
+              <img
+                src="/ethioreco-logo-small.png"
+                alt="EthioReco logo"
+                className="h-10 w-10 object-contain"
+              />
+              <div>
+                <div className="flex items-center gap-1.5 font-display uppercase tracking-tight text-base">
+                  <span className="brand-ethio">Ethio</span>
+                  <span className="brand-reco">Reco</span>
+                </div>
+                <p className="text-xs text-ash mt-0.5">Discover what fits you.</p>
               </div>
-              <p className="text-xs text-ash mt-1">Discover what fits you.</p>
             </div>
             <div className="text-center sm:text-right">
               <p className="text-xs text-ash">
-                University of Gondar · Department of Computer Science
+                Movies · Music · Books — one discovery engine
               </p>
               <p className="text-xs text-ash/60 mt-1">
-                Graduation Project · 2026 · Hybrid Recommendation System
+                © {new Date().getFullYear()} EthioReco · Built with Ethiopian cultural relevance
               </p>
             </div>
           </div>
